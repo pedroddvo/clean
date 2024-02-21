@@ -4,13 +4,17 @@ import Lean.Meta
 set_option hygiene false in
 macro "defInt" idn:ident : command => do
   let cName := idn.getId.toString.toLower
-  let unsized := Lean.mkIdent <| idn.getId.appendBefore "U"
+  let unsized := Lean.mkIdent (idn.getId.appendBefore "U")
+  let toUnsized := Lean.mkIdent (unsized.getId.appendBefore "to")
   let c := Lean.Syntax.mkStrLit
-  `(structure $idn := val : $unsized
-    deriving Inhabited
-
-    namespace $idn
+  `(namespace $idn
     @[extern 1 c $(c s!"{cName}_to_int")] opaque toInt : $idn -> Int
+    @[extern 1 c $(c s!"{cName}_to_int8")] opaque toInt8 : $idn -> Int8
+    @[extern 1 c $(c s!"{cName}_to_int16")] opaque toInt16 : $idn -> Int16
+    @[extern 1 c $(c s!"{cName}_to_int32")] opaque toInt32 : $idn -> Int32
+    @[extern 1 c $(c s!"{cName}_to_int64")] opaque toInt64 : $idn -> Int64
+    @[extern 1 c $(c s!"{cName}_to_u{cName}")] opaque $toUnsized : $idn -> $unsized
+
     @[extern 1 c $(c s!"{cName}_of_nat")] opaque ofNat (n : @& Nat) : $idn
 
     @[extern 1 c $(c s!"{cName}_neg")] opaque neg : $idn -> $idn
@@ -38,10 +42,28 @@ macro "defInt" idn:ident : command => do
     end $idn)
 
 namespace C
+
+structure Int8  := val : UInt8  deriving Inhabited
+structure Int16 := val : UInt16 deriving Inhabited
+structure Int32 := val : UInt32 deriving Inhabited
+structure Int64 := val : UInt64 deriving Inhabited
+
 defInt Int8
 defInt Int16
 defInt Int32
 defInt Int64
+
+def Int8.max : Int8 := 127
+def Int8.min : Int8 := -128
+
+def Int16.max : Int16 := 32767
+def Int16.min : Int16 := -32768
+
+def Int32.max : Int32 := 2147483647
+def Int32.min : Int32 := -2147483648
+
+def Int64.max : Int64 := 9223372036854775807
+def Int64.min : Int64 := -9223372036854775808
 
 inductive PlatformSize | bit32 | bit64
 
@@ -68,3 +90,5 @@ macro "UShort" : term => `(UInt16)
 macro "ULongLong" : term => `(UInt64)
 
 macro "Char" : term => `(SChar)
+
+end C
