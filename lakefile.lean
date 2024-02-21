@@ -1,7 +1,7 @@
 import Lake
 open Lake DSL
 
-package «c» where
+package «clean» where
   -- add package configuration options here
 
 target ffi.o pkg : FilePath := do
