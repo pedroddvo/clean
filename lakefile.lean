@@ -19,7 +19,7 @@ extern_lib libleanffi pkg := do
 lean_lib «C» where
   -- add library configuration options here
 
-@[default_target]
+-- @[default_target]
 lean_exe «test» where
   root := `Test
   -- Enables the use of the Lean interpreter by the executable (e.g.,
