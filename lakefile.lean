@@ -19,6 +19,6 @@ target ffi.o pkg : FilePath := do
   buildO "ffi.c" oFile srcJob weakArgs #["-fPIC"] "cc" getLeanTrace
 
 extern_lib libleanffi pkg := do
-  let name := nameToStaticLib "ffi"
+  let name := nameToStaticLib "clean"
   let ffiO ← fetch <| pkg.target ``ffi.o
   buildStaticLib (pkg.nativeLibDir / name) #[ffiO]

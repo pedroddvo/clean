@@ -1,5 +1,2 @@
-/build
-/lakefile.olean
-/lake-packages/*
-.lake
+/.lake
 compile_flags.txt
